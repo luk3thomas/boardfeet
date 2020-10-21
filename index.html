@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <title>Calculate board feet</title>
+    <style>
+      .thickness, .width, .length {
+        width: 4em;
+        text-align: center;
+      }
+      .price {
+        width: 8em;
+      }
+      .c {
+        text-align: center;
+      }
+      .r {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Calculate board feet</h1>
+    <div id="main">
+      <table>
+        <thead>
+          <tr>
+            <th>Price</th>
+            <th>Thickness</th>
+            <th>Width</th>
+            <th>Length</th>
+            <th>Board feet</th>
+            <th>Price per board foot</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tr v-for="board in boards">
+          <td> <button v-on:click="removeBoard(board)">Remove</button> $<input class="price" v-on:change="save()" v-model="board.price" /> </td>
+          <td> <input class="thickness" v-on:change="save()" v-model="board.thickness" /> Inches</td>
+          <td> <input class="width" v-on:change="save()" v-model="board.width" /> Inches</td>
+          <td> <input class="length" v-on:change="save()" v-model="board.length" /> Feet</td>
+          <td class="c"> {{ boardFeet(board) }}</td>
+          <td class="r"> {{ pricePerFoot(board) }}</td>
+          <td> <input v-on:change="save()" v-model="board.description" /> </td>
+        </tr>
+      </table>
+      <button v-on:click="addBoard()">Add board</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+      var FEET = 'feet'
+      var INCHES = 'inches'
+      var NAMESPACE = 'boardFeet'
+      var app = new Vue({
+        el: '#main',
+        data: {
+          boards: [
+            { price: 0, width: 1, length: 1, thickness: 1 },
+            { price: 0, width: 2, length: 1, thickness: 1 },
+            { price: 0, width: 3, length: 1, thickness: 1 },
+          ]
+        },
+        mounted() {
+          var boards = localStorage.getItem(NAMESPACE)
+          if (boards) {
+            this.boards = JSON.parse(boards)
+          }
+        },
+        methods: {
+          boardFeet: function(board) {
+            var w = parseFloat(board.width)
+            var t = parseFloat(board.thickness)
+            var l = parseFloat(board.length)
+            var boardFeet = (w * t * (l * 12)) / 12
+            return isNaN(boardFeet) ? 0 : boardFeet
+          },
+          pricePerFoot: function(board) {
+            var p = parseFloat(board.price)
+            var price = p / this.boardFeet(board)
+            return isNaN(price) ? 0 : price.toFixed(2)
+          },
+          addBoard: function() {
+            this.boards.push({})
+          },
+          save: function() {
+            localStorage.setItem(NAMESPACE, JSON.stringify(this.boards))
+          },
+          removeBoard: function(board) {
+            this.boards = this.boards.filter(function(b) {
+              return b !== board
+            })
+          },
+        }
+      });
+    </script>
+  </body>
+</html>
