@@ -69,8 +69,8 @@
             var w = parseFloat(board.width)
             var t = parseFloat(board.thickness)
             var l = parseFloat(board.length)
-            var boardFeet = (w * t * (l * 12)) / 12
-            return isNaN(boardFeet) ? 0 : boardFeet
+            var boardFeet = (w * t * (l * 12)) / 144
+            return isNaN(boardFeet) ? 0 : boardFeet.toFixed(2)
           },
           pricePerFoot: function(board) {
             var p = parseFloat(board.price)
